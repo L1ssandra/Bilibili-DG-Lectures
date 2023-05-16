@@ -1,0 +1,12 @@
+parameter(Nx = 250, Ny = 250, frameMAX = 60)
+parameter(pi = 4*atan(1.0d0))
+parameter(Nx1 = Nx + 1, Ny1 = Ny + 1)
+
+
+real xa,xb,ya,yb,tend,maxu
+integer bcL,bcR,bcU,bcD
+
+common /mesh /hx,hy,X(0:Nx),Y(0:Ny)
+common /bc /bcL,bcR,bcU,bcD
+common /solution /uh(-1:Nx1,-1:Ny1),du(-1:Nx1,-1:Ny1),maxu
+common /time /t,dt,tend,CFL

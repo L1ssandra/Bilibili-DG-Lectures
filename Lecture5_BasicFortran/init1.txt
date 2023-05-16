@@ -1,0 +1,14 @@
+real u0
+u0(x,y) = sin(x)*sin(y)
+
+xa = 0
+xb = 2*pi
+ya = 0
+yb = 2*pi
+
+bcL = 1
+bcR = 1
+bcU = 1
+bcD = 1
+
+tend = 2*pi
