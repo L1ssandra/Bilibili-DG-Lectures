@@ -1,0 +1,33 @@
+! Riemann problem
+
+real p
+p(x,y) = pp1(x,y)
+real rho
+rho(x,y) = rho1(x,y)
+real v1
+v1(x,y) = ux1(x,y)
+real v2
+v2(x,y) = uy1(x,y)
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2)
+
+xa = 0
+xb = 1
+ya = 0
+yb = 1
+
+bcR = 2
+bcL = 2
+bcU = 2
+bcD = 2
+
+tend = 0.8
+
+M = 100

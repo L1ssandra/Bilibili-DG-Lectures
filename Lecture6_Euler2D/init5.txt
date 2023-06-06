@@ -1,0 +1,34 @@
+! Double Mach reflection
+
+real p
+p(x,y) = pMa(x,y)
+real rho
+rho(x,y) = rhoMa(x,y)
+real v1
+v1(x,y) = v1Ma(x,y)
+real v2
+v2(x,y) = v2Ma(x,y)
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2)
+
+xa = 0
+xb = 3.2
+ya = 0
+yb = 1
+
+bcR = 2
+bcL = 2
+bcU = 3
+bcD = 3
+
+tend = 0.2
+
+shock = 1
+M = 10

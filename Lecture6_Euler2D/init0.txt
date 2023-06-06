@@ -1,0 +1,39 @@
+! Euler vortex
+
+parameter(gammaE = 1.4d0)
+parameter(gammaE1 = gammaE - 1)
+parameter(beta = 5)
+
+real rr
+rr(x,y) = (x - 5)**2 + y**2
+real rho
+rho(x,y) = (1 - gammaE1/(16*gammaE*pi**2)*beta**2*exp(2*(1 - rr(x,y))))**(1d0/gammaE1)
+real v1
+v1(x,y) = 1 - beta*exp(1 - rr(x,y))*y/(2*pi)
+real v2
+v2(x,y) = beta*exp(1 - rr(x,y))*(x - 5)/(2*pi)
+real p
+p(x,y) = rho(x,y)**gammaE
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2)
+
+xa = 0
+xb = 10
+ya = -5
+yb = 5
+
+bcR = 1
+bcL = 1
+bcU = 1
+bcD = 1
+
+tend = 1
+is_2D = 1
+M = 1000000

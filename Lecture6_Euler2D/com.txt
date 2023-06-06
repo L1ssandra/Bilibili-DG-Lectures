@@ -1,0 +1,50 @@
+parameter(Nx = 1408, Ny = 440, k = 2, NumEq = 4, NumGLP = 5, RKorder = 3, flux_type = 2, flash = 0, frameMAX = 20)
+
+integer dimPk
+parameter(dimPk = (k + 1)*(k + 2)/2)
+parameter(Nx1 = Nx + 1, Ny1 = Ny + 1)
+parameter(pi = 4*atan(1.0d0))
+parameter(gamma = 1.4)
+parameter(gamma1 = gamma - 1)
+real,external :: rho0,ux0,uy0
+real,external :: rhoC,u1C,u2C,u3C,pC,B1C,B2C,B3C
+real,external :: p0
+real,external :: Bx01,By01,Az
+real,external :: pressure
+real,external :: p8,rho8,B28
+
+real mm, L2, lambda, KM, KMR, KML, KMU, KMD, SR, SL, mmE, tend, M, R, L, uhsave, tRK
+integer count, d
+
+common /basis1 /phiG(NumGLP, NumGLP, dimPk), phiGLL(NumGLP,NumGLP,dimPk,3), phiGR(NumGLP,dimPk), phiGL(NumGLP,dimPk), phiGU(NumGLP,dimPk), phiGD(NumGLP,dimPk), phixG(NumGLP, NumGLP, dimPk), phiyG(NumGLP, NumGLP, dimPk)
+common /basis2 /lambda(NumGLP), lambdaL(NumGLP), weight(NumGLP), mm(dimPk)
+common /time /t, dt, tend, alphax, alphay, alpha1, alpha2, CFL, count, tt, countf, t20, tRK
+common /NumSolution1 /uh(0:Nx1, 0:Ny1, dimPk, NumEq), umax, uGint(NumGLP, NumGLP, NumEq), Fxint(NumGLP,NumGLP,NumEq), Fyint(NumGLP,NumGLP,NumEq)
+common /NumSolution2 /blast
+common /RK /uI(0:Nx1, 0:Ny1, dimPk, NumEq), uII(0:Nx1, 0:Ny1, dimPk, NumEq), du(0:Nx1, 0:Ny1, dimPk, NumEq), uh0(0:Nx1, 0:Ny1, dimPk, NumEq)
+common /init /Xc(Nx), Yc(Ny), Xbb(0:Nx), Ybb(0:Ny), L2(NumEq), is_2D
+common /mesh /hx, hy, hx1, hy1, xa, xb, ya, yb
+common /bc /bcR,bcL,bcU,bcD
+common /flux1 /UR(0:Nx,Ny,NumGLP,NumEq), UL(Nx1,Ny,NumGLP,NumEq), UU(Nx,0:Ny,NumGLP,NumEq), UD(Nx,Ny1,NumGLP,NumEq)
+common /flux2 /FR(0:Nx,Ny,NumGLP,NumEq), FL(Nx1,Ny,NumGLP,NumEq), FU(Nx,0:Ny,NumGLP,NumEq), FD(Nx,Ny1,NumGLP,NumEq), Fx(NumGLP,NumGLP,NumEq), Fy(NumGLP,NumGLP,NumEq)
+common /flux3 /Fxhat(0:Nx,Ny,NumGLP,NumEq), Fyhat(Nx,0:Ny,NumGLP,NumEq)
+common /flux4 /FR1(NumEq),FL1(NumEq),UR1(NumEq),UL1(NumEq),Fhat1(NumEq)
+common /flux5 /SR,SL,SRmax,SRmin,SLmax,SLmin,direction,SU,SD
+common /flux6 /Ustar(NumEq),URstar(NumEq),ULstar(NumEq),UUstar(NumEq),UDstar(NumEq), URstarstar(NumEq), ULstarstar(NumEq)
+common /fluxfunction /rhoM(NumGLP,NumGLP),uM(NumGLP,NumGLP),vM(NumGLP,NumGLP),wM(NumGLP,NumGLP),EM(NumGLP,NumGLP),pM(NumGLP,NumGLP)
+common /Limiter1 /DeltaUR(NumEq,1),DeltaUL(NumEq,1),DeltaU(NumEq,1),DeltaUxmod(NumEq,1),DeltaUymod(NumEq,1),DeltaUmod(NumEq,1),R(4,4),L(4,4),M
+common /Limiter2 /DeltaUR1(NumEq,1),DeltaUL1(NumEq,1),DeltaUU1(NumEq,1),DeltaUD1(NumEq,1),DeltaU1(NumEq,1),DeltaUmod1(NumEq,1),uhmod(0:Nx1,0:Ny1,dimPk,NumEq),change(NumEq)
+common /Limiter3 /DeltaUR1mod(NumEq,1),DeltaUL1mod(NumEq,1),DeltaUU1mod(NumEq,1),DeltaUD1mod(NumEq,1)
+common /Limiter4 /aRM(0:Nx1,0:Ny1,k + 1), aLM(0:Nx1,0:Ny1,k + 1), bUM(0:Nx1,0:Ny1,k + 1), bDM(0:Nx1,0:Ny1,k + 1), Bxmod(0:Nx,Ny,k + 1), Bymod(Nx,0:Ny,k + 1)
+common /Limiter5 /uhGLL(NumGLP,NumGLP,NumEq,3),p1,pmin,uhppmod(Nx,Ny,dimPk,NumEq)
+common /Limiter6 /Is_Trouble_Cell(Nx,Ny),shock
+
+common /Ez_basis /EzG(NumGLP,k + 1), EzxG(NumGLP,k + 1), EzyG(NumGLP,k + 1), mmE(k + 1), EzR(k + 1), EzL(k + 1), EzU(k + 1), EzD(k + 1)
+common /Ez_value /EzRL(0:Nx,Ny,NumGLP), EzUD(Nx,0:Ny,NumGLP)
+common /Ez_Numsolution /Bx(0:Nx,Ny,k + 1), By(Nx,0:Ny,k + 1), dEz1(0:Nx,Ny,k + 1), dEz2(Nx,0:Ny,k + 1), BxG(0:Nx,Ny,NumGLP), ByG(Nx,0:Ny,NumGLP)
+common /Ez_solution /Ez1real(0:Nx,Ny,NumGLP), Ez2real(Nx,0:Ny,NumGLP)
+common /Vertex1 /EzVertex(0:Nx,0:Ny), phiRU(dimPk), phiLU(dimPk), phiRD(dimPk), phiLD(dimPk)
+common /Vertex2 /URU(0:Nx1,0:Ny1,NumEq),ULU(0:Nx1,0:Ny1,NumEq),URD(0:Nx1,0:Ny1,NumEq),ULD(0:Nx1,0:Ny1,NumEq)
+common /Vertex3 /URU1(NumEq),ULU1(NumEq),URD1(NumEq),ULD1(NumEq),Fxhat1(NumEq),Fyhat1(NumEq),Ezhat, B1E(0:Nx,Ny,NumGLP), B2E(Nx,0:Ny,NumGLP)
+common /RKB /BxI(0:Nx,Ny,k + 1), ByI(Nx,0:Ny,k + 1), BxII(0:Nx,Ny,k + 1), ByII(Nx,0:Ny,k + 1), Bx0(0:Nx,Ny,k + 1), By0(Nx,0:Ny,k + 1)
+common /div /totaldiv, uGdiv(NumGLP,NumGLP)

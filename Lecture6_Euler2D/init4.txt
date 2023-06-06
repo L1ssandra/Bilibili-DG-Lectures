@@ -1,0 +1,33 @@
+! High Mach number jet
+
+real p
+p(x,y) = 0.4127
+real rho
+rho(x,y) = 0.5
+real v1
+v1(x,y) = 0
+real v2
+v2(x,y) = 0
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2)
+
+xa = 0
+xb = 1
+ya = -0.25
+yb = 0.25
+
+bcR = 2
+bcL = 3
+bcU = 2
+bcD = 2
+
+tend = 0.001
+
+M = 1
