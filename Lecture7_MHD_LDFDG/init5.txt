@@ -1,0 +1,55 @@
+! MHD Blast
+
+real p
+p(x,y) = p0(x,y)
+real rho
+rho(x,y) = 1
+real v1
+v1(x,y) = 0
+real v2
+v2(x,y) = 0
+real v3
+v3(x,y) = 0
+real B1
+B1(x,y) = 100/(4*pi)**0.5
+real B2
+B2(x,y) = 0
+real B3
+B3(x,y) = 0
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = rho(x,y)*v3(x,y)
+real U5
+U5(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2) + 0.5d0*(B1(x,y)**2 + B2(x,y)**2)
+real U6
+U6(x,y) = B1(x,y)
+real U7
+U7(x,y) = B2(x,y)
+real U8
+U8(x,y) = B3(x,y)
+real Ezf
+Ezf(x,y) = v2(x,y)*B1(x,y) - v1(x,y)*B2(x,y)
+
+xa = -0.5
+xb = 0.5
+ya = -0.5
+yb = 0.5
+
+bcR = 2
+bcL = 2
+bcU = 2
+bcD = 2
+
+tend = 0.01
+
+is_2D = 1
+
+shock = 1
+
+M = 10

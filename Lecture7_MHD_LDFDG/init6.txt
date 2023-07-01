@@ -1,0 +1,51 @@
+! Cloud Shock Interaction
+
+real p
+p(x,y) = pC(x,y)
+real rho
+rho(x,y) = rhoC(x,y)
+real v1
+v1(x,y) = u1C(x,y)
+real v2
+v2(x,y) = u2C(x,y)
+real v3
+v3(x,y) = u3C(x,y)
+real B1
+B1(x,y) = B1C(x,y)
+real B2
+B2(x,y) = B2C(x,y)
+real B3
+B3(x,y) = B3C(x,y)
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = rho(x,y)*v3(x,y)
+real U5
+U5(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2 + v3(x,y)**2) + 0.5d0*(B1(x,y)**2 + B2(x,y)**2 + B3(x,y)**2)
+real U6
+U6(x,y) = B1(x,y)
+real U7
+U7(x,y) = B2(x,y)
+real U8
+U8(x,y) = B3(x,y)
+real Ezf
+Ezf(x,y) = v2(x,y)*B1(x,y) - v1(x,y)*B2(x,y)
+
+xa = 0
+xb = 2
+ya = 0
+yb = 1
+
+bcR = 2
+bcL = 2
+bcU = 2
+bcD = 2
+
+tend = 0.6
+shock = 1
+M = 10
