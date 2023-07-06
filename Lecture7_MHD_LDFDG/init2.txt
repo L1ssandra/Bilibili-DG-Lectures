@@ -1,0 +1,54 @@
+! Smooth Alfv¨¦n Wave
+
+parameter(alpha = pi/4)
+parameter(sinA = sin(alpha))
+parameter(cosA = cos(alpha))
+
+real vbot
+vbot(x,y) = 0.1d0*sin(2d0*pi*(x*cosA + y*sinA))
+real Bbot
+Bbot(x,y) = 0.1d0*sin(2d0*pi*(x*cosA + y*sinA))
+real Bpar
+Bpar(x,y) = 1
+
+real p
+p(x,y) = 0.1
+real rho
+rho(x,y) = 1
+real v1
+v1(x,y) = vbot(x,y)*(-sinA)
+real v2
+v2(x,y) = vbot(x,y)*cosA
+real B1
+B1(x,y) = Bpar(x,y)*cosA - Bbot(x,y)*sinA
+real B2
+B2(x,y) = Bpar(x,y)*sinA + Bbot(x,y)*cosA
+
+real U1
+U1(x,y) = rho(x,y)
+real U2
+U2(x,y) = rho(x,y)*v1(x,y)
+real U3
+U3(x,y) = rho(x,y)*v2(x,y)
+real U4
+U4(x,y) = p(x,y)/gamma1 + 0.5d0*rho(x,y)*(v1(x,y)**2 + v2(x,y)**2) + 0.5d0*(B1(x,y)**2 + B2(x,y)**2)
+real U5
+U5(x,y) = B1(x,y)
+real U6
+U6(x,y) = B2(x,y)
+real Ezf
+Ezf(x,y) = v2(x,y)*B1(x,y) - v1(x,y)*B2(x,y)
+
+xa = 0
+xb = 1d0/cosA
+ya = 0
+yb = 1d0/sinA
+
+bcR = 1
+bcL = 1
+bcU = 1
+bcD = 1
+
+tend = 2
+
+M = 1000000
